@@ -1,3 +1,4 @@
+
 # Job Scraper API
 
 This project consists of a Python script that scrapes job listings from multiple platforms (Indeed, LinkedIn, ZipRecruiter, Glassdoor, Google) and serves the data via a Flask API. A Node.js function fetches this data and provides it to clients.
@@ -55,6 +56,5 @@ node server.js
 
 ### **Node.js API**
 - **GET** `/api/getJobs` - Calls the Flask API and returns job listings.
-
 
 
