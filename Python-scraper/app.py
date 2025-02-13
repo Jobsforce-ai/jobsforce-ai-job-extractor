@@ -3,9 +3,19 @@ from flask_cors import CORS
 import math
 from jobspy import scrape_jobs
 from datetime import date, datetime
-
+from pymongo import MongoClient
+from models import insert_job 
 app = Flask(__name__)
 CORS(app)
+
+try:
+    client = MongoClient(MONGO_URI)
+    db = client['job_database']  
+    collection = db['jobs'] 
+
+    print("Connected to MongoDB successfully!")
+except Exception as e:
+    print(f" MongoDB Connection Failed: {e}")
 
 # Function to clean and serialize data
 def clean_data(obj):
@@ -29,12 +39,12 @@ def get_jobs():
         print("Fetching jobs from jobspy...")  # Debugging statement
 
         jobs = scrape_jobs(
-            site_name=["indeed", "linkedin", "zip_recruiter", "glassdoor", "google"],
+            site_name=["indeed", "linkedin", "zip_recruiter", "glassdoor"],
             search_term="Software Engineer",
             location="India",
             results_wanted=1000,
-            hours_old=72,
-            country_indeed="india"  # Changed from "india" to "in"
+            hours_old=24,
+            country_indeed="india"
         )
 
         # Check if jobs were fetched successfully
@@ -49,6 +59,11 @@ def get_jobs():
         jobs_with_description = filter_jobs_with_description(jobs_serializable)
 
         print(f"Jobs after filtering descriptions: {len(jobs_with_description)}")  # Debugging
+
+        if jobs_with_description:
+            for job in jobs_with_description:
+                insert_job(job)
+            print("Jobs successfully stored in MongoDB.")
 
         return jsonify(jobs_with_description)
 
