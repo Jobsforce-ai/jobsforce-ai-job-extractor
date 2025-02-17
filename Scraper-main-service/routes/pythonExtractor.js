@@ -3,7 +3,7 @@ const router = express.Router();
 const pythonExtractor = require("../controllers/pythonExtractor");
 
 
-router.get("/", pythonExtractor.getJobs);
+router.get("/", pythonExtractor.getCachedJobs);
 
 
 module.exports = router;
